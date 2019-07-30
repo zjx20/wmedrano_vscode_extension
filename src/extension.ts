@@ -14,7 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {
 	if (quick_searcher !== null) {
-		quick_searcher.hide();
+		quick_searcher.dispose();
 		quick_searcher = null;
 	}
 }

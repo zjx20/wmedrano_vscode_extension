@@ -25,8 +25,17 @@ export class QuickSearcher {
     // Hide the text input from the user. This kills any search that may be in
     // flight.
     hide() {
-        this.quick_pick.hide();
         this.maybeKillProcess();
+        this.quick_pick.hide();
+        this.quick_pick.busy = false;
+        this.quick_pick.items = [];
+    }
+
+    // Frees up all resources used by `QuickSearcher`. After this call, the
+    // instance is no longer useable.
+    dispose() {
+        this.hide();
+        this.quick_pick.dispose();
     }
 
     // Kill the search process if it exists.
