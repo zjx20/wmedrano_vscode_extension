@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 
 function generate(): { [key: string]: any } {
     let config: { [key: string]: any } = {
-        'workbench.colorTheme': 'Atom One Dark',
+        'workbench.colorTheme': 'One Monokai',
 
         // TODO: This should be detected based on the screen size or not
         // overwritten at all.

@@ -6,7 +6,11 @@ file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on
 how to structure this file.
 
-## [Unreleased]
+## [2.0.1]
+
+- Free up resources from `QuickSearch` more efficiently.
+- Support vscode down to 1.32.
+- Set theme to "One Monokai".
 
 ### 2.0.0
 
