@@ -1,17 +1,18 @@
 import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 
-interface RipgrepperItem extends vscode.QuickPickItem {
+interface QuickSearchItem extends vscode.QuickPickItem {
 	file: string;
 	line: number;
 	column: number;
 }
 
-class Ripgrepper {
+class QuickSearcher {
 	query: string;
 	process: child_process.ChildProcess | null;
-	quick_pick: vscode.QuickPick<RipgrepperItem>;
+	quick_pick: vscode.QuickPick<QuickSearchItem>;
 
+	// Create a new QuickSearcher that can be activated with the show method.
 	constructor() {
 		this.query = "";
 		this.quick_pick = vscode.window.createQuickPick();
@@ -21,21 +22,27 @@ class Ripgrepper {
 		this.quick_pick.onDidHide(this.hide.bind(this));
 	}
 
+	// Show the text input to the user.
 	show() {
 		this.quick_pick.show();
 	}
 
+	// Hide the text input from the user. This kills any search that may be in
+	// flight.
 	hide() {
 		this.quick_pick.hide();
 		this.maybeKillProcess();
 	}
 
+	// Kill the search process if it exists.
 	maybeKillProcess() {
 		if (this.process !== null && !this.process.killed) {
 			this.process.kill();
 		}
 	}
 
+	// Call when there is an accepteable input. It opens the text documents
+	// and hids the input.
 	onDidAccept() {
 		this.hide();
 		for (let item of this.quick_pick.selectedItems) {
@@ -47,6 +54,8 @@ class Ripgrepper {
 		}
 	}
 
+	// Call when there is a change in the input. A new search for query will
+	// commence, canceling any previous searches.
 	onDidChangeValue(query: string) {
 		// TODO: Make the query interpretation configurable. This particular
 		// formatting causes all spaces to match anything.
@@ -62,11 +71,13 @@ class Ripgrepper {
 		if (query.length < MINIMUM_REQUIRED_LENGTH) {
 			return;
 		}
-		let command = this.makeCommand();
+		let command = this.makeRgCommand();
 		this.quick_pick.busy = true;
 		this.process = child_process.exec(command, this.onRgFinished.bind(this));
 	}
 
+	// Call when ripgrep has finished searching. `stdout` is expected to be
+	// ripgrep's JSON output invoked with the --json flag.
 	onRgFinished(err: child_process.ExecException | null, stdout: string, stderr: string): void {
 		let matches = [];
 		for (let line of stdout.split("\n")) {
@@ -85,7 +96,7 @@ class Ripgrepper {
 			let file: string = data["path"]["text"];
 			let text: string = data["lines"]["text"];
 			let line_number: any = data["line_number"];
-			let match: RipgrepperItem = {
+			let match: QuickSearchItem = {
 				file: file,
 				// ripgrep uses 1 based line number while vscode usually takes
 				// 0 based line indices.
@@ -98,10 +109,13 @@ class Ripgrepper {
 			matches.push(match);
 		}
 		this.quick_pick.busy = false;
+		// TODO: Implement a strategy for handling when there are too many
+		// matches. This includes defining how many matches is too many.
 		this.quick_pick.items = matches;
 	}
 
-	makeCommand(): string {
+	// Make a command for the current query by using ripgrep.
+	makeRgCommand(): string {
 		let paths: string[] = [];
 		/// TODO: The files should be obtained using the workspace API rather than recursively searching the
 		// directories. This is to ensure that the same files are being filtered.
@@ -113,25 +127,26 @@ class Ripgrepper {
 		// Avoid running the command when no path was specified. Running without any specified files may be dangerous
 		// as ripgrep will check all files in whatever the current working directory is.
 		if (paths.length === 0) {
-			console.error("Ripgrepper found no paths in workspace.");
+			console.error("QuickSearcher found no paths in workspace.");
 			return "echo";
 		}
+		// TODO: Support more backends.
 		return `rg --json -e '${this.query}' ${paths.join(' ')}`;
 	}
 }
 
-let rg: Ripgrepper | null = null;
+let quick_searcher: QuickSearcher | null = null;
 
 export function activate(context: vscode.ExtensionContext) {
-	rg = new Ripgrepper();
-	let disposable = vscode.commands.registerCommand('extension.wmedrano.quickGrep', rg.show.bind(rg));
+	quick_searcher = new QuickSearcher();
+	let disposable = vscode.commands.registerCommand('extension.wmedrano.quickSearch', quick_searcher.show.bind(quick_searcher));
 
 	context.subscriptions.push(disposable);
 }
 
 export function deactivate() {
-	if (rg !== null) {
-		rg.hide();
-		rg = null;
+	if (quick_searcher !== null) {
+		quick_searcher.hide();
+		quick_searcher = null;
 	}
 }

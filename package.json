@@ -2,6 +2,7 @@
 	"name": "wmedrano",
 	"displayName": "wmedrano",
 	"description": "Stuff for me",
+	"publisher": "wmedrano",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.36.0"
@@ -10,14 +11,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.wmedrano.quickGrep"
+		"onCommand:extension.wmedrano.quickSearch"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.wmedrano.quickGrep",
-				"title": "Quick Grep"
+				"command": "extension.wmedrano.quickSearch",
+				"title": "Quick Search"
 			}
 		]
 	},
@@ -38,5 +39,10 @@
 		"typescript": "^3.3.1",
 		"tslint": "^5.12.1",
 		"vscode-test": "^1.0.2"
-	}
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/wmedrano/wmedrano_vscode_extension.git"
+	},
+	"homepage": "https://github.com/wmedrano/wmedrano_vscode_extension"
 }
