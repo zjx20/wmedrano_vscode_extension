@@ -11,6 +11,7 @@ export class QuickSearcher {
         this.query = "";
         this.quick_pick = vscode.window.createQuickPick();
         this.process = null;
+        this.quick_pick.title = 'Quick Search';
         this.quick_pick.onDidChangeValue(this.onDidChangeValue.bind(this));
         this.quick_pick.onDidAccept(this.onDidAccept.bind(this));
         this.quick_pick.onDidHide(this.hide.bind(this));
