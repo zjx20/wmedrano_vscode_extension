@@ -3,7 +3,7 @@
 	"displayName": "wmedrano",
 	"description": "Stuff for me",
 	"publisher": "wmedrano",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"engines": {
 		"vscode": "^1.36.0"
 	},
@@ -11,7 +11,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.wmedrano.quickSearch"
+		"onCommand:extension.wmedrano.quickSearch",
+		"onCommand:extension.wmedrano.writeConfig"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -19,6 +20,10 @@
 			{
 				"command": "extension.wmedrano.quickSearch",
 				"title": "Quick Search"
+			},
+			{
+				"command": "extension.wmedrano.writeConfig",
+				"title": "Write WMedrano Config"
 			}
 		]
 	},
