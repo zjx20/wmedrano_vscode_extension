@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as child_process from 'child_process';
+import * as ripgrep from 'vscode-ripgrep';
 
 export class QuickSearcher {
     private query: string;
@@ -135,7 +136,7 @@ export class QuickSearcher {
             return "echo";
         }
         // TODO: Support more backends.
-        return `rg --json -e '${this.query}' ${paths.join(' ')}`;
+        return `${ripgrep.rgPath} --json -e '${this.query}' ${paths.join(' ')}`;
     }
 
 

@@ -6,6 +6,10 @@ file.
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on
 how to structure this file.
 
+## [2.0.2]
+
+- Use `vscode-ripgrep` library to more robustly identify the path for ripgrep.
+
 ## [2.0.1]
 
 - Free up resources from `QuickSearch` more efficiently.
