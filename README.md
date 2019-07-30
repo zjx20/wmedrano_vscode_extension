@@ -21,6 +21,10 @@ There are currently no customizeable settings.
 
 ## Release Notes
 
+### 1.0.0
+
+Rename `extension.wmedrano.quickGrep` command to `extension.wmedrano.quickSearch`.
+
 ### 0.0.1
 
 Initial release of wmedrano vscode extensions. Implements `Quick Search` to
