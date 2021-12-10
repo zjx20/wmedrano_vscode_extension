@@ -6,6 +6,7 @@ export class QuickSearcher {
     private query: string;
     private process: child_process.ChildProcess | null;
     private quick_pick: vscode.QuickPick<QuickSearchItem>;
+    private console: vscode.OutputChannel;
 
     // Create a new QuickSearcher that can be activated with the show method.
     constructor() {
@@ -16,6 +17,7 @@ export class QuickSearcher {
         this.quick_pick.onDidChangeValue(this.onDidChangeValue.bind(this));
         this.quick_pick.onDidAccept(this.onDidAccept.bind(this));
         this.quick_pick.onDidHide(this.hide.bind(this));
+        this.console = vscode.window.createOutputChannel("QuickSearcher");
     }
 
     // Show the text input to the user.
@@ -77,6 +79,8 @@ export class QuickSearcher {
             return;
         }
         const command = this.makeRgCommand();
+        // this.console.show();
+        this.console.appendLine("exec cmd: " + command);
         this.quick_pick.busy = true;
         this.process = child_process.exec(command, this.onRgFinished.bind(this));
     }

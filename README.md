@@ -22,3 +22,17 @@ current editor, replacing any text that may exist.
 ## Extension Settings
 
 There are currently no customizeable settings.
+
+## How To Build
+
+```bash
+cd <extension folder>
+npm install
+# download ripgrep bin
+cd node_modules/vscode-ripgrep
+npm install
+
+vsce package
+code --install-extension <the .vsix>
+```
+
