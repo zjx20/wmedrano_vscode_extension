@@ -136,7 +136,7 @@ export class QuickSearcher {
             return "echo";
         }
         // TODO: Support more backends.
-        return `${ripgrep.rgPath} --json -e '${this.query}' ${paths.join(' ')}`;
+        return `${ripgrep.rgPath} -L -uu --json -e '${this.query}' ${paths.join(' ')}`;
     }
 
 
