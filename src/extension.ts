@@ -8,6 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
 	quick_searcher = new quick_search.QuickSearcher();
 	context.subscriptions.push(
 		vscode.commands.registerCommand('extension.wmedrano.quickSearch', quick_searcher.show.bind(quick_searcher)),
+		vscode.commands.registerCommand('extension.wmedrano.quickSearchPeek', quick_searcher.quickPeek.bind(quick_searcher)),
 		vscode.commands.registerCommand('extension.wmedrano.writeConfig', config_generator.writeToEditor),
 	);
 }

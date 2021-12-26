@@ -12,6 +12,7 @@
 	],
 	"activationEvents": [
 		"onCommand:extension.wmedrano.quickSearch",
+		"onCommand:extension.wmedrano.quickSearchPeek",
 		"onCommand:extension.wmedrano.writeConfig"
 	],
 	"main": "./out/extension.js",
@@ -22,8 +23,25 @@
 				"title": "Quick Search"
 			},
 			{
+				"command": "extension.wmedrano.quickSearchPeek",
+				"title": "Quick Search Peek"
+			},
+			{
 				"command": "extension.wmedrano.writeConfig",
 				"title": "Write WMedrano Config"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "extension.wmedrano.quickSearch",
+				"key": "ctrl+shift+i",
+				"mac": "cmd+shift+i"
+			},
+			{
+				"command": "extension.wmedrano.quickSearchPeek",
+				"key": "ctrl+shift+j",
+				"mac": "cmd+shift+j",
+				"when": "editorTextFocus"
 			}
 		]
 	},
