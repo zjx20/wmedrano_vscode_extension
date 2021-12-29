@@ -1,8 +1,8 @@
 {
-	"name": "wmedrano",
-	"displayName": "wmedrano",
-	"description": "Stuff for me",
-	"publisher": "wmedrano",
+	"name": "xgrep",
+	"displayName": "xgrep",
+	"description": "Grep in the whole workspace and show results in the peek view instead of the file search view.",
+	"publisher": "zjx20",
 	"version": "4.1.0",
 	"engines": {
 		"vscode": "^1.32.0"
@@ -11,34 +11,29 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.wmedrano.quickSearch",
-		"onCommand:extension.wmedrano.quickSearchPeek",
-		"onCommand:extension.wmedrano.writeConfig"
+		"onCommand:extension.xgrep.quickSearch",
+		"onCommand:extension.xgrep.quickSearchPeek"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.wmedrano.quickSearch",
+				"command": "extension.xgrep.quickSearch",
 				"title": "Quick Search"
 			},
 			{
-				"command": "extension.wmedrano.quickSearchPeek",
+				"command": "extension.xgrep.quickSearchPeek",
 				"title": "Quick Search Peek"
-			},
-			{
-				"command": "extension.wmedrano.writeConfig",
-				"title": "Write WMedrano Config"
 			}
 		],
 		"keybindings": [
 			{
-				"command": "extension.wmedrano.quickSearch",
+				"command": "extension.xgrep.quickSearch",
 				"key": "ctrl+shift+i",
 				"mac": "cmd+shift+i"
 			},
 			{
-				"command": "extension.wmedrano.quickSearchPeek",
+				"command": "extension.xgrep.quickSearchPeek",
 				"key": "ctrl+shift+j",
 				"mac": "cmd+shift+j",
 				"when": "editorTextFocus"
@@ -53,7 +48,8 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"dependencies": {
-		"vscode-ripgrep": "^1.5.5"
+		"https-proxy-agent": "^4.0.0",
+		"proxy-from-env": "^1.1.0"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.1",
@@ -68,7 +64,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/wmedrano/wmedrano_vscode_extension.git"
+		"url": "https://github.com/zjx20/vscode_xgrep.git"
 	},
-	"homepage": "https://github.com/wmedrano/wmedrano_vscode_extension"
+	"homepage": "https://github.com/zjx20/vscode_xgrep"
 }

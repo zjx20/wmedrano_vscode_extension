@@ -1,15 +1,42 @@
 import * as vscode from 'vscode';
 import * as quick_search from './quick_search';
-import * as config_generator from './config_generator';
+import * as console from './console';
+import * as fs from 'fs';
+const rg = require('../lib/rg');
 
 let quick_searcher: quick_search.QuickSearcher | null = null;
 
+function checkDownloadRg(context: vscode.ExtensionContext) {
+	if (fs.existsSync(rg.rgPath())) {
+		return;
+	}
+    vscode.window.showInformationMessage("miss rg command, download it from github.com?" + context.extensionPath, "Download").then((value?: string) => {
+        if (value === "Download") {
+			try {
+				rg.downloadRg(function(err: any) {
+					quick_searcher?.console.info("downloadRg done ", err)
+					if (err) {
+						vscode.window.showInformationMessage("download rg failed, " + err);
+					} else {
+						vscode.window.showInformationMessage("download rg succeeded!");
+					}
+				});
+			} catch (e) {
+				quick_searcher!.console.error("rg.downloadRg", e);
+            }
+        }
+    });
+}
+
 export function activate(context: vscode.ExtensionContext) {
-	quick_searcher = new quick_search.QuickSearcher();
+	let ch = vscode.window.createOutputChannel("xgrep");
+	let con = new console.Console(ch);
+	rg.setConsole(con);
+	checkDownloadRg(context);
+	quick_searcher = new quick_search.QuickSearcher(con);
 	context.subscriptions.push(
-		vscode.commands.registerCommand('extension.wmedrano.quickSearch', quick_searcher.show.bind(quick_searcher)),
-		vscode.commands.registerCommand('extension.wmedrano.quickSearchPeek', quick_searcher.quickPeek.bind(quick_searcher)),
-		vscode.commands.registerCommand('extension.wmedrano.writeConfig', config_generator.writeToEditor),
+		vscode.commands.registerCommand('extension.xgrep.quickSearch', quick_searcher.show.bind(quick_searcher)),
+		vscode.commands.registerCommand('extension.xgrep.quickSearchPeek', quick_searcher.quickPeek.bind(quick_searcher)),
 	);
 }
 

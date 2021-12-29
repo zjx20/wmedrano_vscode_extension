@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import * as child_process from 'child_process';
-import * as ripgrep from 'vscode-ripgrep';
+import * as fs from 'fs';
+import * as console from './console';
+const rg = require('../lib/rg');
 
 const OpenInPeekViewText: string = "Open in Peek View..."
 
@@ -8,23 +10,35 @@ export class QuickSearcher {
     private query: string;
     private process: child_process.ChildProcess | null;
     private quick_pick: vscode.QuickPick<QuickSearchItem>;
-    private console: vscode.OutputChannel;
+    public console: console.Console;
     private onFinish: (matches: QuickSearchItem[]) => void = function(){}
 
     // Create a new QuickSearcher that can be activated with the show method.
-    constructor() {
+    constructor(con: console.Console) {
         this.query = "";
         this.quick_pick = vscode.window.createQuickPick();
         this.process = null;
-        this.quick_pick.title = 'Quick Search';
+        this.quick_pick.title = 'xgrep';
         this.quick_pick.onDidChangeValue(this.onDidChangeValue.bind(this));
         this.quick_pick.onDidAccept(this.onDidAccept.bind(this));
         this.quick_pick.onDidHide(this.hide.bind(this));
-        this.console = vscode.window.createOutputChannel("QuickSearcher");
+        this.console = con;
+    }
+
+    checkRg() {
+        if (fs.existsSync(rg.rgPath())) {
+            return true;
+        }
+        this.console.console.show();
+        this.console.error("miss rg command");
+        return false;
     }
 
     // Show the text input to the user.
     show() {
+        if (!this.checkRg()) {
+            return;
+        }
         this.onFinish = function(matches: QuickSearchItem[]) {
             if (matches.length > 0) {
                 matches.unshift({
@@ -51,6 +65,9 @@ export class QuickSearcher {
     }
 
     quickPeek() {
+        if (!this.checkRg()) {
+            return;
+        }
         const editor = vscode.window.activeTextEditor;
         if (editor) {
             let selection = editor.selection;
@@ -166,7 +183,7 @@ export class QuickSearcher {
         }
         const command = this.makeRgCommand();
         // this.console.show();
-        this.console.appendLine("exec cmd: " + command);
+        this.console.log("exec cmd: " + command);
         this.quick_pick.busy = true;
         this.process = child_process.exec(command, {maxBuffer: 2000 * 1024}, this.onRgFinished.bind(this));
     }
@@ -174,7 +191,7 @@ export class QuickSearcher {
     // Call when ripgrep has finished searching. `stdout` is expected to be
     // ripgrep's JSON output invoked with the --json flag.
     private onRgFinished(err: child_process.ExecException | null, stdout: string, stderr: string): void {
-        this.console.appendLine("onRgFinished sz: " + stdout.length);
+        this.console.log("onRgFinished sz: " + stdout.length);
         let matches = [];
         for (const line of stdout.split("\n")) {
             if (line.length === 0) {
@@ -185,7 +202,7 @@ export class QuickSearcher {
             try {
                 entry = JSON.parse(line);
             } catch (e) {
-                this.console.appendLine("parse json fail, err: " + e);
+                this.console.error("parse json fail, err: " + e);
                 break;
             }
 
@@ -212,7 +229,7 @@ export class QuickSearcher {
             };
             matches.push(match);
         }
-        this.console.appendLine("onRgFinished matches: " + matches.length);
+        this.console.log("onRgFinished matches: " + matches.length);
         this.quick_pick.busy = false;
         this.onFinish(matches);
     }
@@ -230,11 +247,11 @@ export class QuickSearcher {
         // Avoid running the command when no path was specified. Running without any specified files may be dangerous
         // as ripgrep will check all files in whatever the current working directory is.
         if (paths.length === 0) {
-            console.error("QuickSearcher found no paths in workspace.");
+            this.console.error("xgrep found no paths in workspace.");
             return "echo";
         }
         // TODO: Support more backends.
-        return `${ripgrep.rgPath} -L -uu --json -e '${this.query}' ${paths.join(' ')}`;
+        return `${rg.rgPath()} -L -uu --json -e '${this.query}' ${paths.join(' ')}`;
     }
 
 
