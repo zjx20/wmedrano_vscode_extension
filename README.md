@@ -1,6 +1,13 @@
-# wmedrano
+# xgrep
 
-An extension to implement random vscode things I may want.
+Grep the whole workspace and show results in the peek view instead of the file search view.
+
+`xgrep` was inherited from [wmedrano_vscode_extension](https://github.com/wmedrano/wmedrano_vscode_extension) , all credit goes to it.
+
+## Requirements
+
+* [ripgrep](https://github.com/BurntSushi/ripgrep)
+* PowerShell (on Windows)
 
 ## Features
 
@@ -9,27 +16,33 @@ An extension to implement random vscode things I may want.
 `Quick Search` allows using the Quick Input to grep as you type and jump to
 file without having to go to the Search pane.
 `Quick Search` can be invoked by calling `Quick Search` title command or
-binding the "extension.wmedrano.quickSearch" command.
+binding the "extension.xgrep.quickSearch" command.
 
-Requires [ripgrep](https://github.com/BurntSushi/ripgrep).
+Default key binding:
+* mac: `cmd + shift + i`
+* win: `ctrl + shift + i`
 
+### Quick Search Peek
 
-### Write Wmedrano Config
+Almost same as `Quick Search`, except it automatically search for the selected
+text or the word at the cursor.
 
-Provides `Write WMedrano Config` which writes the vscode JSON config to the
-current editor, replacing any text that may exist.
+Default key binding:
+* mac: `cmd + shift + j`
+* win: `ctrl + shift + j`
 
 ## Extension Settings
 
-There are currently no customizeable settings.
+There are currently no customizable settings.
+
+## Known Issues
+
+* Search keyword contains special characters (such as ``"'`\.*``) might not work.
 
 ## How To Build
 
 ```bash
 cd <extension folder>
-npm install
-# download ripgrep bin
-cd node_modules/vscode-ripgrep
 npm install
 
 vsce package

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as child_process from 'child_process';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as console from './console';
 const rg = require('../lib/rg');
 
@@ -12,6 +13,7 @@ export class QuickSearcher {
     private quick_pick: vscode.QuickPick<QuickSearchItem>;
     public console: console.Console;
     private onFinish: (matches: QuickSearchItem[]) => void = function(){}
+    private lastCmd: Function | null = null;
 
     // Create a new QuickSearcher that can be activated with the show method.
     constructor(con: console.Console) {
@@ -29,14 +31,20 @@ export class QuickSearcher {
         if (fs.existsSync(rg.rgPath())) {
             return true;
         }
-        this.console.console.show();
         this.console.error("miss rg command");
         return false;
+    }
+
+    public retryLastCmd() {
+        if (this.lastCmd) {
+            this.lastCmd()
+        }
     }
 
     // Show the text input to the user.
     show() {
         if (!this.checkRg()) {
+            this.lastCmd = this.show;
             return;
         }
         this.onFinish = function(matches: QuickSearchItem[]) {
@@ -66,6 +74,7 @@ export class QuickSearcher {
 
     quickPeek() {
         if (!this.checkRg()) {
+            this.lastCmd = this.quickPeek;
             return;
         }
         const editor = vscode.window.activeTextEditor;
@@ -192,6 +201,8 @@ export class QuickSearcher {
     // ripgrep's JSON output invoked with the --json flag.
     private onRgFinished(err: child_process.ExecException | null, stdout: string, stderr: string): void {
         this.console.log("onRgFinished sz: " + stdout.length);
+        // this.console.log("stdout: ", stdout);
+        // this.console.log("stderr: ", stderr);
         let matches = [];
         for (const line of stdout.split("\n")) {
             if (line.length === 0) {
@@ -251,7 +262,11 @@ export class QuickSearcher {
             return "echo";
         }
         // TODO: Support more backends.
-        return `${rg.rgPath()} -L -uu --json -e '${this.query}' ${paths.join(' ')}`;
+        let rgCmd = `${rg.rgPath()} -L -uu --json -e '${this.query}' ${paths.join(' ')}`;
+        if (os.type() === "Windows_NT") {
+            rgCmd = `powershell "${rgCmd}"`;
+        }
+        return rgCmd
     }
 
 

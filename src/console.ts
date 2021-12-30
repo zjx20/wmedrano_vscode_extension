@@ -26,4 +26,8 @@ export class Console {
     public error(...args: any[]) {
         this.console.appendLine("[ERR] " + args.join(" "));
     }
+
+    public append(...args: any[]) {
+        this.console.append(args.join(" "));
+    }
 }

@@ -3,7 +3,7 @@
 	"displayName": "xgrep",
 	"description": "Grep in the whole workspace and show results in the peek view instead of the file search view.",
 	"publisher": "zjx20",
-	"version": "4.1.0",
+	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.32.0"
 	},

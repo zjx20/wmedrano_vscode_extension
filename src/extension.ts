@@ -10,9 +10,10 @@ function checkDownloadRg(context: vscode.ExtensionContext) {
 	if (fs.existsSync(rg.rgPath())) {
 		return;
 	}
-    vscode.window.showInformationMessage("miss rg command, download it from github.com?" + context.extensionPath, "Download").then((value?: string) => {
+    vscode.window.showInformationMessage("miss rg command, download it from github.com?", "Download").then((value?: string) => {
         if (value === "Download") {
 			try {
+				quick_searcher?.console.console.show();
 				rg.downloadRg(function(err: any) {
 					quick_searcher?.console.info("downloadRg done ", err)
 					if (err) {
@@ -22,7 +23,7 @@ function checkDownloadRg(context: vscode.ExtensionContext) {
 					}
 				});
 			} catch (e) {
-				quick_searcher!.console.error("rg.downloadRg", e);
+				quick_searcher?.console.error("rg.downloadRg", e);
             }
         }
     });
@@ -32,7 +33,11 @@ export function activate(context: vscode.ExtensionContext) {
 	let ch = vscode.window.createOutputChannel("xgrep");
 	let con = new console.Console(ch);
 	rg.setConsole(con);
-	checkDownloadRg(context);
+	rg.tryExtractRg(function(){
+		quick_searcher?.retryLastCmd();
+		checkDownloadRg(context);
+	});
+
 	quick_searcher = new quick_search.QuickSearcher(con);
 	context.subscriptions.push(
 		vscode.commands.registerCommand('extension.xgrep.quickSearch', quick_searcher.show.bind(quick_searcher)),
