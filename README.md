@@ -31,6 +31,8 @@ Default key binding:
 * mac: `cmd + shift + j`
 * win: `ctrl + shift + j`
 
+![preview](https://github.com/zjx20/xgrep/raw/master/preview.gif)
+
 ## Extension Settings
 
 There are currently no customizable settings.
